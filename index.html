@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Firebase Web Test</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div class="container pt-5 mt-5">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Firebase Web Test</h1>
+                <button id="btn" class="btn btn-primary">Add to Home Screen (Only prompt in mobile)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.0.3/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAX1YX6XqsXGu3SyQjXyISPJnh5JAFJCQI",
+            authDomain: "fir-webtest-2c0d2.firebaseapp.com",
+            databaseURL: "https://fir-webtest-2c0d2.firebaseio.com",
+            projectId: "fir-webtest-2c0d2",
+            storageBucket: "fir-webtest-2c0d2.appspot.com",
+            messagingSenderId: "238008401879"
+        };
+        firebase.initializeApp(config);
+
+        // Detect service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function() { console.log('sw registered'); })
+                .catch(function(err){ console.log('sw fail to register',err); });
+        } else {
+            alert("serviceWorker is not supported")
+        } 
+
+        //Click and show add to home screen (work in mobile google chrome)
+        let deferredPrompt;
+        let btnAdd = document.getElementById("btn");
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            btnAdd.style.display = 'block';
+        });
+
+        btnAdd.addEventListener('click', (e) => {
+            // hide our user interface that shows our A2HS button
+            btnAdd.style.display = 'none';
+            // Show the prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice
+            .then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the A2HS prompt');
+            } else {
+                console.log('User dismissed the A2HS prompt');
+            }
+            deferredPrompt = null;
+            });
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            app.logEvent('a2hs', 'installed');
+        });       
+    </script>  
+</body>
+</html>

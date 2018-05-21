@@ -1,0 +1,15 @@
+{
+    "name": "Firebase Web Test",
+    "short_name": "FirebaseWebTest",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF",
+    "icons": [
+     {
+      "src": "/img/firebase-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+     }
+    ]
+   }
